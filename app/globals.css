@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+:root {
+  --radius: 1.25rem;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  color: theme(colors.ink);
+  background: theme(colors.sand.50);
+}
+
+/* Subtle selection to match the brand */
+::selection {
+  background: rgba(232, 216, 204, 0.9);
+}
