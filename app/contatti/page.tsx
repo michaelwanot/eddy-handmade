@@ -54,7 +54,7 @@ export default function ContactPage() {
             </div>
             <button
               disabled={status === 'sending'}
-              className="inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-medium text-white shadow-soft disabled:opacity-60"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-medium text-white shadow-soft disabled:opacity-60"
             >
               {status === 'sending' ? 'Invio…' : 'Invia'}
             </button>

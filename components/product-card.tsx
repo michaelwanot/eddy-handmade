@@ -18,6 +18,11 @@ export default function ProductCard({ product }: { product: Product }) {
     <div className="group overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
       <Link href={`/shop/${product.slug}`} className="block">
         <div className="relative aspect-[4/3]">
+          {product.isSoldOut && (
+            <span className="absolute left-3 top-3 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-white shadow">
+              Esaurito
+            </span>
+          )}
           <Image
             src={imageSrc}
             alt={product.name}
@@ -48,10 +53,11 @@ export default function ProductCard({ product }: { product: Product }) {
       </Link>
       <div className="px-5 pb-5">
         <button
-          onClick={() => add(product)}
-          className="inline-flex w-full items-center justify-center rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-white shadow-soft hover:opacity-95"
+          onClick={() => !product.isSoldOut && add(product)}
+          disabled={product.isSoldOut}
+          className="inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-soft hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Aggiungi al carrello
+          {product.isSoldOut ? 'Esaurito' : 'Aggiungi al carrello'}
         </button>
       </div>
     </div>

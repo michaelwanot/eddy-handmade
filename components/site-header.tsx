@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, ShoppingBag, X } from 'lucide-react'
 import { useCart } from '@/components/cart/cart-context'
 import clsx from 'clsx'
 
@@ -30,7 +29,7 @@ export default function SiteHeader() {
             aria-label="Apri menu"
             onClick={() => setOpen(true)}
           >
-            <Menu className="h-5 w-5" />
+            <i className="pi pi-bars text-xl" aria-hidden />
           </button>
           <nav className="hidden items-center justify-end gap-8 text-sm md:flex">
             {leftNav.map((i) => (
@@ -83,7 +82,7 @@ export default function SiteHeader() {
             href="/carrello"
             className="relative inline-flex h-10 items-center justify-center gap-2 rounded-full border border-black/10 bg-white/60 px-4 text-sm shadow-soft"
           >
-            <ShoppingBag className="h-4 w-4" />
+            <i className="pi pi-shopping-cart text-lg" aria-hidden />
             <span className="hidden sm:inline">Carrello</span>
             {count > 0 && (
               <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[11px] font-semibold text-white">
@@ -106,7 +105,7 @@ export default function SiteHeader() {
                 aria-label="Chiudi menu"
                 onClick={() => setOpen(false)}
               >
-                <X className="h-5 w-5" />
+                <i className="pi pi-times text-xl" aria-hidden />
               </button>
             </div>
             <div className="flex flex-col gap-1 p-2 bg-amber-50">

@@ -51,7 +51,7 @@ export const products: Product[] = [
       "/products/ecofur/ecofur_2.jpeg",
       "/products/ecofur/ecofur_3.jpeg",
     ],
-    isSoldOut: false,
+    isSoldOut: true,
     details: ["Pezzo unico", "Fatta a mano", "Spedizione inclusa (Italia)"],
   },
 ];

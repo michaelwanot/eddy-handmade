@@ -51,7 +51,7 @@ function AddToCartButton({ product }: { product: Product }) {
         type="button"
         onClick={() => add(product)}
         disabled={product.isSoldOut}
-        className="inline-flex flex-1 items-center justify-center rounded-full bg-ink px-8 py-3.5 text-sm font-medium text-white shadow-soft transition hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed min-w-[200px]"
+        className="inline-flex flex-1 items-center justify-center rounded-full bg-primary px-8 py-3.5 text-sm font-medium text-white shadow-soft transition hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed min-w-[200px]"
       >
         {product.isSoldOut ? 'Esaurito' : 'Aggiungi al carrello'}
       </button>

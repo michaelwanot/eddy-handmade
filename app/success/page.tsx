@@ -1,18 +1,20 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useCart } from '@/components/cart/cart-context'
 
-export default function SuccessPage() {
+function SuccessContent() {
   const { clear } = useCart()
   const params = useSearchParams()
   const sessionId = params.get('session_id')
 
   useEffect(() => {
     clear()
-  }, [clear])
+    // Run once on mount to clear cart after successful payment
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-14">
@@ -28,7 +30,7 @@ export default function SuccessPage() {
           ) : null}
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link href="/shop" className="rounded-full bg-ink px-6 py-3 text-sm font-medium text-white shadow-soft">
+          <Link href="/shop" className="rounded-full bg-primary px-6 py-3 text-sm font-medium text-white shadow-soft">
             Torna allo shop
           </Link>
           <Link href="/" className="rounded-full border border-black/10 bg-white/60 px-6 py-3 text-sm shadow-soft">
@@ -37,5 +39,13 @@ export default function SuccessPage() {
         </div>
       </div>
     </section>
+  )
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div className="mx-auto max-w-3xl px-4 py-14 text-center text-black/65">Caricamento…</div>}>
+      <SuccessContent />
+    </Suspense>
   )
 }

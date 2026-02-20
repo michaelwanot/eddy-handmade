@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { getProductBySlug, formatPriceEUR } from '@/lib/products'
 import ProductDetailClient, { AddToCartButton } from './product-detail-client'
 
@@ -32,7 +31,7 @@ export default async function ProductPage({ params }: Props) {
         href="/shop"
         className="mb-6 inline-flex items-center gap-2 text-sm text-black/65 transition hover:text-black"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <i className="pi pi-arrow-left text-base" aria-hidden />
         Torna allo shop
       </Link>
 

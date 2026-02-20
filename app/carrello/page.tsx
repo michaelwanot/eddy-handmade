@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Trash2 } from 'lucide-react'
 import { useCart } from '@/components/cart/cart-context'
 import { formatPriceEUR } from '@/lib/products'
 
@@ -18,7 +17,8 @@ export default function CartPage() {
     })
 
     if (!res.ok) {
-      alert('Checkout non disponibile. Controlla STRIPE_SECRET_KEY e gli ID prezzo in lib/products.ts')
+      const err = (await res.json().catch(() => ({}))) as { error?: string }
+      alert(err.error ?? 'Checkout non disponibile. Controlla STRIPE_SECRET_KEY in .env.local')
       return
     }
 
@@ -48,7 +48,7 @@ export default function CartPage() {
           <p className="text-sm text-black/65">Il carrello è vuoto.</p>
           <Link
             href="/shop"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-medium text-white shadow-soft"
+            className="mt-6 inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-medium text-white shadow-soft"
           >
             Vai allo shop
           </Link>
@@ -82,7 +82,7 @@ export default function CartPage() {
                     className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/60"
                     aria-label="Rimuovi"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <i className="pi pi-trash text-base" aria-hidden />
                   </button>
                 </div>
               </div>
@@ -102,7 +102,7 @@ export default function CartPage() {
             <div className="mt-5 border-t border-black/5 pt-5">
               <button
                 onClick={checkout}
-                className="inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-medium text-white shadow-soft hover:opacity-95"
+                className="inline-flex w-full items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-medium text-white shadow-soft hover:opacity-95"
               >
                 Paga con Stripe
               </button>

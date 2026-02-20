@@ -6,6 +6,6 @@ export const site = {
   currency: "EUR",
   social: {
     instagramUrl: "https://www.instagram.com/eddy_handmade/",
-    whatsappNumber: "393331234567", // numero con prefisso Italia, senza +
+    whatsappNumber: "393349567995", // numero con prefisso Italia, senza +
   },
 } as const;

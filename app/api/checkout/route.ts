@@ -27,24 +27,23 @@ export async function POST(req: Request) {
     const p = products.find((x) => x.id === i.id)
     if (!p) continue
     const quantity = Math.max(1, Math.min(99, Number(i.qty || 1)))
+    const imageUrls = (p.images ?? [])
+      .filter(Boolean)
+      .slice(0, 8)
+      .map((path) => `${siteUrl}${path}`)
 
-    if (p.stripePriceId && !p.stripePriceId.startsWith('price_REPLACE_ME')) {
-      line_items.push({ price: p.stripePriceId, quantity })
-    } else {
-      // Works out-of-the-box without creating Stripe Prices.
-      line_items.push({
-        quantity,
-        price_data: {
-          currency: 'eur',
-          unit_amount: p.priceCents,
-          product_data: {
-            name: p.name,
-            description: p.shortDescription,
-            images: [`${siteUrl}${p.image}`],
-          },
+    line_items.push({
+      quantity,
+      price_data: {
+        currency: 'eur',
+        unit_amount: p.priceCents,
+        product_data: {
+          name: p.name,
+          description: p.description,
+          ...(imageUrls.length > 0 && { images: imageUrls }),
         },
-      })
-    }
+      },
+    })
   }
 
   if (line_items.length === 0) {

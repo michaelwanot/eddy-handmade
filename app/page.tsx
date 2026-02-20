@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Diamond, Truck, Flag } from 'lucide-react'
 
 export default function HomePage() {
   return (
@@ -38,9 +37,9 @@ export default function HomePage() {
         </div>
 
         <div className="grid gap-0 border-t border-black/5 bg-sand-50 px-4 py-5 sm:grid-cols-3">
-          <Feature icon={<Flag className="h-5 w-5" />} title="Fatto a mano in Italia" />
-          <Feature icon={<Diamond className="h-5 w-5" />} title="Pezzi unici" />
-          <Feature icon={<Truck className="h-5 w-5" />} title="Spedizione inclusa" />
+          <Feature icon={<i className="pi pi-flag text-xl" aria-hidden />} title="Fatto a mano in Italia" />
+          <Feature icon={<i className="pi pi-gem text-xl" aria-hidden />} title="Pezzi unici" />
+          <Feature icon={<i className="pi pi-truck text-xl" aria-hidden />} title="Spedizione inclusa" />
         </div>
       </section>
 
@@ -61,7 +60,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/shop"
-                className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white shadow-soft hover:opacity-95"
+                className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-soft hover:opacity-95"
               >
                 Vai allo shop
               </Link>

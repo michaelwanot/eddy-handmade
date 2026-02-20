@@ -1,8 +1,15 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
+@import "primeicons/primeicons.css";
 
 :root {
   --radius: 1.25rem;
+  /* Brand palette */
+  --background: #F5EFE6;   /* Soft Beige */
+  --primary: #A97142;       /* Deep Caramel */
+  --secondary: #4A3426;    /* Chocolate Brown */
+  --accent: #C6A75E;       /* Soft Gold */
+  --text: #2B1E17;         /* Dark Espresso */
 }
 
 html, body {
@@ -11,10 +18,10 @@ html, body {
 
 body {
   color: theme(colors.ink);
-  background: theme(colors.sand.50);
+  background: theme(colors.background);
 }
 
 /* Subtle selection to match the brand */
 ::selection {
-  background: rgba(232, 216, 204, 0.9);
+  background: rgba(166, 113, 66, 0.25);
 }
