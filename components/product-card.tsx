@@ -2,8 +2,9 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { Product, formatPriceEUR } from '@/lib/products'
+import { Product, formatPriceEUR, getProductDisplayName } from '@/lib/products'
 import { useCart } from '@/components/cart/cart-context'
+import { useToast } from '@/components/toast'
 
 function truncate(str: string, maxLen: number) {
   if (str.length <= maxLen) return str
@@ -12,7 +13,14 @@ function truncate(str: string, maxLen: number) {
 
 export default function ProductCard({ product }: { product: Product }) {
   const { add } = useCart()
+  const { toast } = useToast()
   const imageSrc = product.images[0] ?? '/images/hero.png'
+
+  const handleAddToCart = () => {
+    if (product.isSoldOut) return
+    add(product)
+    toast(`${getProductDisplayName(product)} aggiunto al carrello`)
+  }
 
   return (
     <div className="group overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft">
@@ -52,13 +60,22 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </Link>
       <div className="px-5 pb-5">
-        <button
-          onClick={() => !product.isSoldOut && add(product)}
-          disabled={product.isSoldOut}
-          className="inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-soft hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {product.isSoldOut ? 'Esaurito' : 'Aggiungi al carrello'}
-        </button>
+        {product.variants && product.variants.length > 0 ? (
+          <Link
+            href={`/shop/${product.slug}`}
+            className="inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-soft hover:opacity-95"
+          >
+            Scegli modello
+          </Link>
+        ) : (
+          <button
+            onClick={handleAddToCart}
+            disabled={product.isSoldOut}
+            className="inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-soft hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {product.isSoldOut ? 'Esaurito' : 'Aggiungi al carrello'}
+          </button>
+        )}
       </div>
     </div>
   )

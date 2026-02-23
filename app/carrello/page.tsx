@@ -3,17 +3,22 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/components/cart/cart-context'
-import { formatPriceEUR } from '@/lib/products'
-
+import { formatPriceEUR, getProductDisplayName, getProductPrice } from '@/lib/products'
 
 export default function CartPage() {
-  const { items, subtotalCents, setQty, remove, clear } = useCart()
+  const { items, subtotalCents, setQty, remove, clear, getItemKey } = useCart()
 
   async function checkout() {
     const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: items.map((i) => ({ id: i.product.id, qty: i.qty })) }),
+      body: JSON.stringify({
+        items: items.map((i) => ({
+          id: i.product.id,
+          qty: i.qty,
+          variantId: i.variant?.id ?? undefined,
+        })),
+      }),
     })
 
     if (!res.ok) {
@@ -56,37 +61,43 @@ export default function CartPage() {
       ) : (
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
           <div className="space-y-4">
-            {items.map(({ product, qty }) => (
-              <div key={product.id} className="flex gap-4 rounded-[var(--radius)] bg-white p-4 shadow-soft">
-                <div className="relative h-24 w-32 overflow-hidden rounded-2xl">
-                  <Image src={product.images[0] ?? '/images/hero.png'} alt={product.name} fill className="object-cover" />
-                </div>
-                <div className="flex flex-1 items-start justify-between gap-4">
-                  <div>
-                    <p className="font-medium">{product.name}</p>
-                    <p className="mt-1 text-sm text-black/65">{formatPriceEUR(product.priceCents)}</p>
-                    <div className="mt-3 flex items-center gap-2">
-                      <label className="text-xs text-black/55">Qtà</label>
-                      <input
-                        value={qty}
-                        onChange={(e) => setQty(product.id, Number(e.target.value || 1))}
-                        type="number"
-                        min={1}
-                        max={99}
-                        className="w-20 rounded-full border border-black/10 bg-sand-50 px-3 py-1.5 text-sm outline-none"
-                      />
-                    </div>
+            {items.map((item) => {
+              const itemKey = getItemKey(item)
+              const displayName = getProductDisplayName(item.product, item.variant)
+              const priceCents = getProductPrice(item.product, item.variant)
+              const imageSrc = item.variant?.image ?? item.product.images[0] ?? '/images/hero.png'
+              return (
+                <div key={itemKey} className="flex gap-4 rounded-[var(--radius)] bg-white p-4 shadow-soft">
+                  <div className="relative h-24 w-32 overflow-hidden rounded-2xl">
+                    <Image src={imageSrc} alt={displayName} fill className="object-cover" />
                   </div>
-                  <button
-                    onClick={() => remove(product.id)}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/60"
-                    aria-label="Rimuovi"
-                  >
-                    <i className="pi pi-trash text-base" aria-hidden />
-                  </button>
+                  <div className="flex flex-1 items-start justify-between gap-4">
+                    <div>
+                      <p className="font-medium">{displayName}</p>
+                      <p className="mt-1 text-sm text-black/65">{formatPriceEUR(priceCents)}</p>
+                      <div className="mt-3 flex items-center gap-2">
+                        <label className="text-xs text-black/55">Qtà</label>
+                        <input
+                          value={item.qty}
+                          onChange={(e) => setQty(itemKey, Number(e.target.value || 1))}
+                          type="number"
+                          min={1}
+                          max={99}
+                          className="w-20 rounded-full border border-black/10 bg-sand-50 px-3 py-1.5 text-sm outline-none"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => remove(itemKey)}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/60"
+                      aria-label="Rimuovi"
+                    >
+                      <i className="pi pi-trash text-base" aria-hidden />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className="h-fit rounded-[var(--radius)] bg-white p-6 shadow-soft">

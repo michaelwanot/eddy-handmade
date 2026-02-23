@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
 import { CartProvider } from '@/components/cart/cart-context'
+import { ToastProvider } from '@/components/toast'
 import SiteHeader from '@/components/site-header'
 import SiteFooter from '@/components/site-footer'
 import WhatsAppButton from '@/components/whatsapp-button'
@@ -26,6 +27,9 @@ export const metadata: Metadata = {
     template: '%s · Eddy Handmade',
   },
   description: 'Borse all’uncinetto create una alla volta. Pezzi unici, fatti a mano in Italia.',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -33,10 +37,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it">
       <body className={`${cormorant.variable} ${dmSans.variable} ${dmSans.className} min-h-dvh antialiased`}>
         <CartProvider>
-          <SiteHeader />
-          <main>{children}</main>
-          <SiteFooter />
-          <WhatsAppButton />
+          <ToastProvider>
+            <SiteHeader />
+            <main>{children}</main>
+            <SiteFooter />
+            <WhatsAppButton />
+          </ToastProvider>
         </CartProvider>
       </body>
     </html>

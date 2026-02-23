@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   })
 
   const body = await req.json().catch(() => ({}))
-  const items = (body?.items ?? []) as Array<{ id: string; qty: number }>
+  const items = (body?.items ?? []) as Array<{ id: string; qty: number; variantId?: string }>
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
@@ -26,19 +26,24 @@ export async function POST(req: Request) {
   for (const i of items) {
     const p = products.find((x) => x.id === i.id)
     if (!p) continue
+    const variant = i.variantId
+      ? p.variants?.find((v) => v.id === i.variantId)
+      : undefined
     const quantity = Math.max(1, Math.min(99, Number(i.qty || 1)))
-    const imageUrls = (p.images ?? [])
+    const unitAmount = variant?.priceCents ?? p.priceCents
+    const lineName = variant ? `${p.name} – ${variant.label}` : p.name
+    const imageUrls = (variant?.image ? [variant.image] : p.images ?? [])
       .filter(Boolean)
       .slice(0, 8)
-      .map((path) => `${siteUrl}${path}`)
+      .map((path) => (path.startsWith('http') ? path : `${siteUrl}${path}`))
 
     line_items.push({
       quantity,
       price_data: {
         currency: 'eur',
-        unit_amount: p.priceCents,
+        unit_amount: unitAmount,
         product_data: {
-          name: p.name,
+          name: lineName,
           description: p.description,
           ...(imageUrls.length > 0 && { images: imageUrls }),
         },

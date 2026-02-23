@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getProductBySlug, formatPriceEUR } from '@/lib/products'
-import ProductDetailClient, { AddToCartButton } from './product-detail-client'
+import ProductDetailClient, { AddToCartButton, ProductVariantProvider } from './product-detail-client'
 import type { Metadata } from 'next'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -102,18 +102,18 @@ export default async function ProductPage({ params }: Props) {
         Torna allo shop
       </Link>
 
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-        {/* Gallery */}
-        <div className="space-y-4">
-          <ProductDetailClient
-            images={images}
-            name={product.name}
-            // ✅ alt SEO per immagini
-            imageAlt={product.seo?.imageAlt ?? ''}
-          />
-        </div>
+      <ProductVariantProvider>
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
+          {/* Gallery */}
+          <div className="space-y-4">
+            <ProductDetailClient
+              images={images}
+              name={product.name}
+              imageAlt={product.seo?.imageAlt ?? ''}
+            />
+          </div>
 
-        <div>
+          <div>
           <h1 className="font-serif text-3xl tracking-tight md:text-4xl">{product.name}</h1>
           <p className="mt-3 text-xl font-semibold">{formatPriceEUR(product.priceCents)}</p>
 
@@ -147,7 +147,8 @@ export default async function ProductPage({ params }: Props) {
             Pagamento sicuro con Stripe • Prodotto artigianale fatto a mano in Italia
           </p>
         </div>
-      </div>
+        </div>
+      </ProductVariantProvider>
     </section>
   )
 }

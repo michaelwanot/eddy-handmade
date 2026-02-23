@@ -1,19 +1,21 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
-import type { Product } from '@/lib/products'
+import type { Product, ProductVariant } from '@/lib/products'
+import { getCartItemKey } from '@/lib/products'
 
 export type CartItem = {
   product: Product
   qty: number
+  variant?: ProductVariant | null
 }
 
 type State = { items: Record<string, CartItem> }
 
 type Action =
-  | { type: 'ADD'; product: Product; qty?: number }
-  | { type: 'REMOVE'; productId: string }
-  | { type: 'SET_QTY'; productId: string; qty: number }
+  | { type: 'ADD'; product: Product; qty?: number; variant?: ProductVariant | null }
+  | { type: 'REMOVE'; itemKey: string }
+  | { type: 'SET_QTY'; itemKey: string; qty: number }
   | { type: 'CLEAR' }
   | { type: 'HYDRATE'; state: State }
 
@@ -21,35 +23,41 @@ const CartCtx = createContext<{
   items: CartItem[]
   count: number
   subtotalCents: number
-  add: (p: Product, qty?: number) => void
-  remove: (id: string) => void
-  setQty: (id: string, qty: number) => void
+  add: (p: Product, qty?: number, variant?: ProductVariant | null) => void
+  remove: (itemKey: string) => void
+  setQty: (itemKey: string, qty: number) => void
   clear: () => void
+  getItemKey: (item: CartItem) => string
 } | null>(null)
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'ADD': {
       const qty = action.qty ?? 1
-      const existing = state.items[action.product.id]
+      const key = getCartItemKey(action.product.id, action.variant?.id)
+      const existing = state.items[key]
       const nextQty = (existing?.qty ?? 0) + qty
       return {
         items: {
           ...state.items,
-          [action.product.id]: { product: action.product, qty: nextQty },
+          [key]: {
+            product: action.product,
+            qty: nextQty,
+            variant: action.variant ?? undefined,
+          },
         },
       }
     }
     case 'REMOVE': {
       const next = { ...state.items }
-      delete next[action.productId]
+      delete next[action.itemKey]
       return { items: next }
     }
     case 'SET_QTY': {
       const qty = Math.max(1, Math.min(99, action.qty))
-      const item = state.items[action.productId]
+      const item = state.items[action.itemKey]
       if (!item) return state
-      return { items: { ...state.items, [action.productId]: { ...item, qty } } }
+      return { items: { ...state.items, [action.itemKey]: { ...item, qty } } }
     }
     case 'CLEAR':
       return { items: {} }
@@ -89,7 +97,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const items = useMemo(() => Object.values(state.items), [state.items])
   const count = useMemo(() => items.reduce((a, i) => a + i.qty, 0), [items])
   const subtotalCents = useMemo(
-    () => items.reduce((a, i) => a + i.qty * i.product.priceCents, 0),
+    () =>
+      items.reduce((a, i) => {
+        const price = i.variant?.priceCents ?? i.product.priceCents
+        return a + i.qty * price
+      }, 0),
     [items]
   )
 
@@ -98,10 +110,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       items,
       count,
       subtotalCents,
-      add: (p: Product, qty?: number) => dispatch({ type: 'ADD', product: p, qty }),
-      remove: (id: string) => dispatch({ type: 'REMOVE', productId: id }),
-      setQty: (id: string, qty: number) => dispatch({ type: 'SET_QTY', productId: id, qty }),
+      add: (p: Product, qty?: number, variant?: ProductVariant | null) =>
+        dispatch({ type: 'ADD', product: p, qty, variant }),
+      remove: (itemKey: string) => dispatch({ type: 'REMOVE', itemKey }),
+      setQty: (itemKey: string, qty: number) => dispatch({ type: 'SET_QTY', itemKey, qty }),
       clear: () => dispatch({ type: 'CLEAR' }),
+      getItemKey: (item: CartItem) => getCartItemKey(item.product.id, item.variant?.id),
     }),
     [items, count, subtotalCents]
   )
