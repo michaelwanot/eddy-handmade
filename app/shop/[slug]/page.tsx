@@ -1,21 +1,52 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import { getProductBySlug, formatPriceEUR } from '@/lib/products'
 import ProductDetailClient, { AddToCartButton } from './product-detail-client'
+import type { Metadata } from 'next'
 
 type Props = { params: Promise<{ slug: string }> }
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 export async function generateStaticParams() {
   const { products } = await import('@/lib/products')
   return products.map((p) => ({ slug: p.slug }))
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const product = getProductBySlug(slug)
   if (!product) return { title: 'Prodotto non trovato' }
-  return { title: `${product.name} | Eddy Handmade` }
+
+  const canonical = `${SITE_URL}/shop/${product.slug}`
+  const title = `${product.seo?.title ?? product.name} | Eddy Handmade`
+  const description = product.seo?.description ?? product.description
+
+  const ogImage = product.images?.[0]
+    ? product.images[0].startsWith('http')
+      ? product.images[0]
+      : `${SITE_URL}${product.images[0]}`
+    : `${SITE_URL}/images/hero.png`
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: 'website',
+      locale: 'it_IT',
+      images: [{ url: ogImage }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
+    },
+  }
 }
 
 export default async function ProductPage({ params }: Props) {
@@ -23,10 +54,46 @@ export default async function ProductPage({ params }: Props) {
   const product = getProductBySlug(slug)
   if (!product) notFound()
 
-  const images = product.images.length > 0 ? product.images : ['/images/hero.png']
+  const images = product.images?.length ? product.images : ['/images/hero.png']
+  const canonical = `${SITE_URL}/shop/${product.slug}`
+
+  // JSON-LD Product
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.seo?.description ?? product.description,
+    image: images.map((src) => (src.startsWith('http') ? src : `${SITE_URL}${src}`)),
+    brand: { '@type': 'Brand', name: 'Eddy Handmade' },
+    offers: {
+      '@type': 'Offer',
+      url: canonical,
+      priceCurrency: 'EUR',
+      price: (product.priceCents / 100).toFixed(2),
+      availability: product.isSoldOut === true ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      itemCondition: 'https://schema.org/NewCondition',
+    },
+    additionalProperty: [
+      ...(product.dimensions?.heightCm
+        ? [{ '@type': 'PropertyValue', name: 'Altezza', value: `${product.dimensions.heightCm} cm` }]
+        : []),
+      ...(product.dimensions?.widthCm
+        ? [{ '@type': 'PropertyValue', name: 'Larghezza', value: `${product.dimensions.widthCm} cm` }]
+        : []),
+      ...(product.materials?.length
+        ? [{ '@type': 'PropertyValue', name: 'Materiali', value: product.materials.join(', ') }]
+        : []),
+      // ...(product.giftIncluded
+      //   ? [{ '@type': 'PropertyValue', name: 'Incluso', value: 'Braccialetto all’uncinetto in regalo' }]
+      //   : []),
+    ],
+  }
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-8">
+      {/* JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       <Link
         href="/shop"
         className="mb-6 inline-flex items-center gap-2 text-sm text-black/65 transition hover:text-black"
@@ -36,15 +103,29 @@ export default async function ProductPage({ params }: Props) {
       </Link>
 
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-        {/* Gallery: main image + many images */}
+        {/* Gallery */}
         <div className="space-y-4">
-          <ProductDetailClient images={images} name={product.name} />
+          <ProductDetailClient
+            images={images}
+            name={product.name}
+            // ✅ alt SEO per immagini
+            imageAlt={product.seo?.imageAlt ?? ''}
+          />
         </div>
 
         <div>
           <h1 className="font-serif text-3xl tracking-tight md:text-4xl">{product.name}</h1>
           <p className="mt-3 text-xl font-semibold">{formatPriceEUR(product.priceCents)}</p>
+
           <p className="mt-6 text-sm leading-relaxed text-black/75">{product.description}</p>
+
+          {/* Long description (HTML from seo.longCopy) */}
+          {product.seo?.longCopy ? (
+            <div
+              className="mt-6 rounded-2xl bg-white/60 p-5 text-sm leading-relaxed text-black/75 [&_p]:mt-2 [&_p:first]:mt-0 [&_ul]:mt-2 [&_li]:mt-0.5"
+              dangerouslySetInnerHTML={{ __html: product.seo.longCopy.trim() }}
+            />
+          ) : null}
 
           {product.details?.length ? (
             <ul className="mt-6 space-y-2">
@@ -60,6 +141,11 @@ export default async function ProductPage({ params }: Props) {
           <div className="mt-8">
             <AddToCartButton product={product} />
           </div>
+
+          {/* ✅ Piccolo trust snippet SEO */}
+          <p className="mt-4 text-xs text-black/60">
+            Pagamento sicuro con Stripe • Prodotto artigianale fatto a mano in Italia
+          </p>
         </div>
       </div>
     </section>

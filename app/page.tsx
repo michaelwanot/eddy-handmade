@@ -38,7 +38,7 @@ export default function HomePage() {
 
         <div className="grid gap-0 border-t border-black/5 bg-sand-50 px-4 py-5 sm:grid-cols-3">
           <Feature icon={<i className="pi pi-flag text-xl" aria-hidden />} title="Fatto a mano in Italia" />
-          <Feature icon={<i className="pi pi-gem text-xl" aria-hidden />} title="Pezzi unici" />
+          <Feature icon={<i className="pi pi- text-xl" aria-hidden />} title="Pezzi unici" />
           <Feature icon={<i className="pi pi-truck text-xl" aria-hidden />} title="Spedizione inclusa" />
         </div>
       </section>

@@ -5,9 +5,9 @@ import Image from 'next/image'
 import { Product, formatPriceEUR } from '@/lib/products'
 import { useCart } from '@/components/cart/cart-context'
 
-type ProductGalleryProps = { images: string[]; name: string }
+type ProductGalleryProps = { images: string[]; name: string; imageAlt: string }
 
-export default function ProductDetailClient({ images, name }: ProductGalleryProps) {
+export default function ProductDetailClient({ images, name, imageAlt }: ProductGalleryProps) {
   const [selected, setSelected] = useState(0)
   const mainSrc = images[selected] ?? images[0]
 
@@ -16,7 +16,7 @@ export default function ProductDetailClient({ images, name }: ProductGalleryProp
       <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-sand-50">
         <Image
           src={mainSrc}
-          alt={name}
+          alt={imageAlt}
           fill
           className="object-cover"
           priority
