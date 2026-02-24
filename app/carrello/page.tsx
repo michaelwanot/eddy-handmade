@@ -3,10 +3,22 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCart } from '@/components/cart/cart-context'
-import { formatPriceEUR, getProductDisplayName, getProductPrice } from '@/lib/products'
+import { formatPriceEUR, getProductDisplayName, getEffectivePrice, getProductPrice, isOnSale } from '@/lib/products'
 
 export default function CartPage() {
   const { items, subtotalCents, setQty, remove, clear, getItemKey } = useCart()
+
+  const { subtotalOriginalCents, discountCents } = items.reduce(
+    (acc, i) => {
+      const original = getProductPrice(i.product, i.variant) * i.qty
+      const effective = getEffectivePrice(i.product, i.variant) * i.qty
+      acc.subtotalOriginalCents += original
+      acc.discountCents += original - effective
+      return acc
+    },
+    { subtotalOriginalCents: 0, discountCents: 0 }
+  )
+  const hasDiscount = discountCents > 0
 
   async function checkout() {
     const res = await fetch('/api/checkout', {
@@ -64,7 +76,9 @@ export default function CartPage() {
             {items.map((item) => {
               const itemKey = getItemKey(item)
               const displayName = getProductDisplayName(item.product, item.variant)
-              const priceCents = getProductPrice(item.product, item.variant)
+              const priceCents = getEffectivePrice(item.product, item.variant)
+              const originalCents = getProductPrice(item.product, item.variant)
+              const itemOnSale = isOnSale(item.product)
               const imageSrc = item.variant?.image ?? item.product.images[0] ?? '/images/hero.png'
               return (
                 <div key={itemKey} className="flex gap-4 rounded-[var(--radius)] bg-white p-4 shadow-soft">
@@ -74,7 +88,21 @@ export default function CartPage() {
                   <div className="flex flex-1 items-start justify-between gap-4">
                     <div>
                       <p className="font-medium">{displayName}</p>
-                      <p className="mt-1 text-sm text-black/65">{formatPriceEUR(priceCents)}</p>
+                      <p className="mt-1 text-sm text-black/65">
+                        {itemOnSale ? (
+                          <>
+                            <span className="font-semibold text-red-600">{formatPriceEUR(priceCents)}</span>
+                            <span className="ml-1.5 text-black/50 line-through">{formatPriceEUR(originalCents)}</span>
+                            {item.product.saleDiscountPercent != null && (
+                              <span className="ml-1.5 rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-medium text-red-700">
+                                Saldi -{item.product.saleDiscountPercent}%
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          formatPriceEUR(priceCents)
+                        )}
+                      </p>
                       <div className="mt-3 flex items-center gap-2">
                         <label className="text-xs text-black/55">Qtà</label>
                         <input
@@ -102,7 +130,19 @@ export default function CartPage() {
 
           <div className="h-fit rounded-[var(--radius)] bg-white p-6 shadow-soft">
             <p className="text-sm font-medium">Riepilogo</p>
-            <div className="mt-4 flex items-center justify-between text-sm text-black/65">
+            {hasDiscount && (
+              <>
+                <div className="mt-4 flex items-center justify-between text-sm text-black/65">
+                  <span>Subtotale (prezzi di listino)</span>
+                  <span className="line-through">{formatPriceEUR(subtotalOriginalCents)}</span>
+                </div>
+                <div className="mt-1 flex items-center justify-between text-sm text-red-600">
+                  <span>Sconto Saldi</span>
+                  <span className="font-semibold">-{formatPriceEUR(discountCents)}</span>
+                </div>
+              </>
+            )}
+            <div className={`flex items-center justify-between text-sm ${hasDiscount ? 'mt-1' : 'mt-4'} text-black/65`}>
               <span>Subtotale</span>
               <span className="font-semibold text-black">{formatPriceEUR(subtotalCents)}</span>
             </div>

@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
 import type { Product, ProductVariant } from '@/lib/products'
-import { getCartItemKey } from '@/lib/products'
+import { getCartItemKey, getEffectivePrice } from '@/lib/products'
 
 export type CartItem = {
   product: Product
@@ -99,7 +99,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const subtotalCents = useMemo(
     () =>
       items.reduce((a, i) => {
-        const price = i.variant?.priceCents ?? i.product.priceCents
+        const price = getEffectivePrice(i.product, i.variant)
         return a + i.qty * price
       }, 0),
     [items]

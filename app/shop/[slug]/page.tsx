@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getProductBySlug, formatPriceEUR } from '@/lib/products'
+import { getProductBySlug, formatPriceEUR, productCareCopy, getEffectivePrice, isOnSale } from '@/lib/products'
 import ProductDetailClient, { AddToCartButton, ProductVariantProvider } from './product-detail-client'
 import type { Metadata } from 'next'
 
@@ -69,7 +69,7 @@ export default async function ProductPage({ params }: Props) {
       '@type': 'Offer',
       url: canonical,
       priceCurrency: 'EUR',
-      price: (product.priceCents / 100).toFixed(2),
+      price: (getEffectivePrice(product, null) / 100).toFixed(2),
       availability: product.isSoldOut === true ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
       itemCondition: 'https://schema.org/NewCondition',
     },
@@ -115,9 +115,17 @@ export default async function ProductPage({ params }: Props) {
 
           <div>
           <h1 className="font-serif text-3xl tracking-tight md:text-4xl">{product.name}</h1>
-          <p className="mt-3 text-xl font-semibold">{formatPriceEUR(product.priceCents)}</p>
-
-          <p className="mt-6 text-sm leading-relaxed text-black/75">{product.description}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            {isOnSale(product) ? (
+              <>
+                <span className="text-xl font-semibold text-red-600">{formatPriceEUR(getEffectivePrice(product, null))}</span>
+                <span className="text-lg text-black/50 line-through">{formatPriceEUR(product.priceCents)}</span>
+                <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">Saldi</span>
+              </>
+            ) : (
+              <p className="text-xl font-semibold">{formatPriceEUR(product.priceCents)}</p>
+            )}
+          </div>
 
           {/* Long description (HTML from seo.longCopy) */}
           {product.seo?.longCopy ? (
@@ -126,6 +134,12 @@ export default async function ProductPage({ params }: Props) {
               dangerouslySetInnerHTML={{ __html: product.seo.longCopy.trim() }}
             />
           ) : null}
+
+          {/* Cura del prodotto (testo condiviso per tutti i prodotti) */}
+          <div
+            className="mt-6 rounded-2xl bg-white/60 p-5 text-sm leading-relaxed text-black/75 [&_h3]:mt-0 [&_p]:mt-2 [&_ul]:mt-2 [&_li]:mt-0.5"
+            dangerouslySetInnerHTML={{ __html: productCareCopy.trim() }}
+          />
 
           {product.details?.length ? (
             <ul className="mt-6 space-y-2">

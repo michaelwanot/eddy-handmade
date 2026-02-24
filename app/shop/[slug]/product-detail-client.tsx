@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, createContext, useContext, type ReactNode } from 'react'
 import Image from 'next/image'
-import { Product, ProductVariant, formatPriceEUR, getProductPrice, getProductDisplayName } from '@/lib/products'
+import { Product, ProductVariant, formatPriceEUR, getEffectivePrice, getProductDisplayName } from '@/lib/products'
 import { useCart } from '@/components/cart/cart-context'
 import { useToast } from '@/components/toast'
 
@@ -141,7 +141,7 @@ function AddToCartButton({ product }: { product: Product }) {
     toast(`${getProductDisplayName(product, selectedVariant)} aggiunto al carrello`)
   }
 
-  const effectivePrice = getProductPrice(product, selectedVariant)
+  const effectivePrice = getEffectivePrice(product, selectedVariant)
   const isVariantSoldOut = selectedVariant?.isSoldOut ?? false
   const isDisabled =
     product.isSoldOut || isVariantSoldOut || (hasVariants && !selectedVariant)
@@ -167,7 +167,7 @@ function AddToCartButton({ product }: { product: Product }) {
                 {v.label}
                 {v.priceCents != null && v.priceCents !== product.priceCents && (
                   <span className="ml-1.5 text-black/70">
-                    ({formatPriceEUR(v.priceCents)})
+                    ({formatPriceEUR(getEffectivePrice(product, v))})
                   </span>
                 )}
                 {v.isSoldOut && ' · Esaurito'}

@@ -1,3 +1,14 @@
+/** Testo condiviso per la sezione "Cura del prodotto" in tutte le schede prodotto */
+export const productCareCopy = `
+  <h3 class="font-serif text-lg font-semibold mt-6 mb-2">Cura del prodotto</h3>
+  <p>Per mantenere la tua borsa in perfette condizioni:</p>
+  <ul class="list-disc list-inside space-y-1 text-black/75 mt-1">
+    <li>Non lavare in lavatrice</li>
+    <li>Pulire delicatamente con panno umido</li>
+    <li>Conservare in luogo asciutto e lontano da fonti di calore</li>
+  </ul>
+`;
+
 export type ProductVariant = {
   id: string
   label: string
@@ -20,6 +31,8 @@ export type Product = {
   slug: string;
   name: string;
   priceCents: number; // prezzo comprensivo di spedizione
+  /** Sconto percentuale (es. 20 = 20% di sconto). Quando presente, il prezzo effettivo è scontato. */
+  saleDiscountPercent?: number;
   description: string;
   images: string[]; // path in /public
   isSoldOut: boolean; // pezzi unici: se venduto => true
@@ -52,13 +65,6 @@ const trecciatoLongCopy = `
     <li>Chi cerca una borsa in fettuccia morbida e resistente</li>
     <li>Amanti dello stile artigianale contemporaneo</li>
   </ul>
-  <h3 class="font-serif text-lg font-semibold mt-6 mb-2">Cura del prodotto</h3>
-  <p>Per mantenere la tua borsa all'uncinetto in perfette condizioni:</p>
-  <ul class="list-disc list-inside space-y-1 text-black/75 mt-1">
-    <li>Non lavare in lavatrice</li>
-    <li>Pulire delicatamente con panno umido</li>
-    <li>Conservare lontano da fonti di calore diretto</li>
-  </ul>
 `;
 
 const macrameLongCopy = `
@@ -85,12 +91,6 @@ const macrameLongCopy = `
     <li>Eventi informali o serate eleganti</li>
     <li>Chi ama accessori artigianali dal carattere raffinato</li>
   </ul>
-  <h3 class="font-serif text-lg font-semibold mt-6 mb-2">Cura del prodotto</h3>
-  <ul class="list-disc list-inside space-y-1 text-black/75 mt-1">
-    <li>Evitare lavaggi in lavatrice</li>
-    <li>Pulire delicatamente con panno umido</li>
-    <li>Conservare in luogo asciutto e lontano da fonti di calore</li>
-  </ul>
 `;
 
 const ecofurLongCopy = `
@@ -116,23 +116,18 @@ const ecofurLongCopy = `
     <li>Stagione autunno/inverno</li>
     <li>Chi ama accessori artigianali eleganti</li>
   </ul>
-  <h3 class="font-serif text-lg font-semibold mt-6 mb-2">Cura del prodotto</h3>
-  <ul class="list-disc list-inside space-y-1 text-black/75 mt-1">
-    <li>Non lavare in lavatrice</li>
-    <li>Pulire delicatamente con panno umido</li>
-    <li>Conservare lontano da fonti di calore diretto</li>
-  </ul>
 `;
 
 const crochetLongCopy = `
-  <p>La Borsa all'uncinetto in cordino è un accessorio artigianale dal design pulito e contemporaneo, perfetto per chi ama uno stile essenziale ma distintivo.</p>
-  <p>Realizzata interamente a mano con lavorazione all'uncinetto, unisce struttura e morbidezza grazie al cordino resistente e compatto. La forma definita e il manico integrato la rendono pratica e versatile, ideale per accompagnarti nella quotidianità con eleganza.</p>
+  <p>La Borsa all'uncinetto in fettuccia è un accessorio artigianale dal design pulito e contemporaneo, perfetto per chi ama uno stile essenziale ma distintivo.</p>
+  <p>Realizzata interamente a mano con lavorazione all'uncinetto, unisce struttura e morbidezza grazie alla fettuccia resistente e compatta. La forma definita e il manico integrato la rendono pratica e versatile, ideale per accompagnarti nella quotidianità con eleganza. Non è foderata.</p>
   <p>Disponibile in diverse varianti colore, si adatta facilmente a look casual, minimal o più raffinati.</p>
   <p>🎁 Braccialetto coordinato in omaggio incluso nel prezzo.</p>
   <h3 class="font-serif text-lg font-semibold mt-6 mb-2">Caratteristiche</h3>
   <ul class="list-disc list-inside space-y-1 text-black/75">
     <li>Borsa all'uncinetto fatta a mano</li>
-    <li>Realizzata in cordino resistente</li>
+    <li>Realizzata in fettuccia resistente</li>
+    <li>Non foderata</li>
     <li>Struttura compatta e stabile</li>
     <li>Design moderno dalle linee pulite</li>
     <li>Manico integrato ergonomico</li>
@@ -148,13 +143,26 @@ const crochetLongCopy = `
     <li>Eventi informali</li>
     <li>Chi ama accessori artigianali minimal e moderni</li>
   </ul>
-  <h3 class="font-serif text-lg font-semibold mt-6 mb-2">Cura del prodotto</h3>
-  <ul class="list-disc list-inside space-y-1 text-black/75 mt-1">
-    <li>Non lavare in lavatrice</li>
-    <li>Pulire delicatamente con panno umido</li>
-    <li>Conservare in luogo asciutto</li>
+  <p class="mt-4">Questa borsa all'uncinetto in fettuccia è un accessorio artigianale fatto a mano in Italia, pensato per chi ama uno stile minimal ma ricercato. Non è foderata. La lavorazione compatta garantisce resistenza e struttura, mentre il design moderno la rende perfetta per l'uso quotidiano. Disponibile in diverse varianti colore, rappresenta una scelta elegante e versatile per ogni stagione.</p>
+`;
+
+const sciarpaLongCopy = `
+  <p>Morbidezza autentica, 100% lana.</p>
+  <p>Ogni sciarpa è realizzata a mano con lana pura al 100%, calda, traspirante e naturalmente avvolgente. Un accessorio essenziale che unisce qualità, comfort e stile senza tempo.</p>
+  <h3 class="font-serif text-lg font-semibold mt-6 mb-2">Disponibile nelle tonalità</h3>
+  <ul class="list-disc list-inside space-y-1 text-black/75">
+    <li>Caramello caldo</li>
+    <li>Grigio delicato</li>
   </ul>
-  <p class="mt-4">Questa borsa all'uncinetto in cordino è un accessorio artigianale fatto a mano in Italia, pensato per chi ama uno stile minimal ma ricercato. La lavorazione compatta garantisce resistenza e struttura, mentre il design moderno la rende perfetta per l'uso quotidiano. Disponibile in diverse varianti colore, rappresenta una scelta elegante e versatile per ogni stagione.</p>
+  <p class="mt-4">Perfetta da indossare ogni giorno, pensata per chi ama i dettagli artigianali e i materiali naturali.</p>
+  <p>Scegli il tuo colore e lasciati avvolgere dal calore della lana.</p>
+  <h3 class="font-serif text-lg font-semibold mt-6 mb-2">Caratteristiche</h3>
+  <ul class="list-disc list-inside space-y-1 text-black/75">
+    <li>Sciarpa in lana 100% fatta a mano</li>
+    <li>Lana pura, calda e traspirante</li>
+    <li>Materiali naturali</li>
+    <li>Disponibile in Caramello e Grigio</li>
+  </ul>
 `;
 
 export const products: Product[] = [
@@ -239,10 +247,10 @@ export const products: Product[] = [
   {
     id: "crochet",
     slug: "crochet",
-    name: "Borsa all'Uncinetto in Cordino – Fatta a Mano",
+    name: "Borsa all'Uncinetto in Fettuccia – Fatta a Mano",
     priceCents: 1500,
     description:
-      "La Borsa all'uncinetto in cordino è un accessorio artigianale dal design pulito e contemporaneo, perfetto per chi ama uno stile essenziale ma distintivo. Realizzata interamente a mano con lavorazione all'uncinetto, unisce struttura e morbidezza grazie al cordino resistente e compatto. La forma definita e il manico integrato la rendono pratica e versatile, ideale per accompagnarti nella quotidianità con eleganza. Disponibile in diverse varianti colore, si adatta facilmente a look casual, minimal o più raffinati. 🎁 Braccialetto coordinato in omaggio incluso nel prezzo.",
+      "La Borsa all'uncinetto in fettuccia è un accessorio artigianale dal design pulito e contemporaneo, perfetto per chi ama uno stile essenziale ma distintivo. Realizzata interamente a mano con lavorazione all'uncinetto, unisce struttura e morbidezza grazie alla fettuccia resistente e compatta. Non è foderata. La forma definita e il manico integrato la rendono pratica e versatile, ideale per accompagnarti nella quotidianità con eleganza. Disponibile in diverse varianti colore, si adatta facilmente a look casual, minimal o più raffinati. 🎁 Braccialetto coordinato in omaggio incluso nel prezzo.",
     images: [
       "/products/crochet/crochet_display.png",
       "/products/crochet/crochet_ladybug.png",
@@ -252,25 +260,57 @@ export const products: Product[] = [
     isSoldOut: false,
     details: [
       "Borsa all'uncinetto fatta a mano",
-      "Realizzata in cordino resistente",
-      "Struttura compatta e stabile",
+      "Realizzata in fettuccia resistente",
+      "Non foderata",
       "Design moderno dalle linee pulite",
       "Manico integrato ergonomico",
       "Disponibile in più colori",
-      "Braccialetto coordinato incluso",
     ],
     seo: {
-      title: "Borsa all'Uncinetto in Cordino Fatta a Mano | Eddy Handmade",
+      title: "Borsa all'Uncinetto in Fettuccia Fatta a Mano | Eddy Handmade",
       description:
-        "Borsa all'uncinetto in cordino fatta a mano. Design moderno, disponibile in più colori, con braccialetto in omaggio. Artigianale italiana. €40.",
+        "Borsa all'uncinetto in fettuccia fatta a mano, non foderata. Design moderno, disponibile in più colori, con braccialetto in omaggio. Artigianale italiana. €40.",
       imageAlt:
-        "Borse all'uncinetto in cordino fatte a mano in diversi colori – accessori artigianali italiani",
+        "Borse all'uncinetto in fettuccia fatte a mano in diversi colori – accessori artigianali italiani",
       longCopy: crochetLongCopy,
     },
     variants: [
       { id: "ladybug", label: "Ladybug", priceCents: 1500, image: "/products/crochet/crochet_ladybug.png" },
       { id: "flower", label: "Flower", priceCents: 1500, image: "/products/crochet/crochet_flower.png" },
       { id: "snow", label: "Snow", priceCents: 1500, image: "/products/crochet/crochet_snow.png" },
+    ],
+  },
+  {
+    seo: {
+      title: "Sciarpa in Lana 100% – Fatta a Mano | Eddy Handmade",
+      description:
+        "Sciarpa in lana pura 100% fatta a mano. Morbida, calda e traspirante. Disponibile in Caramello e Grigio. Artigianale italiana.",
+      imageAlt:
+        "Sciarpa in lana 100% fatta a mano – Caramello e Grigio",
+      longCopy: sciarpaLongCopy,
+    },
+    materials: ["Lana 100%"],
+    id: "sciarpa",
+    slug: "sciarpa",
+    name: "Sciarpa in Lana 100%",
+    priceCents: 3000,
+    saleDiscountPercent: 20,
+    description:
+      "Ogni sciarpa è realizzata a mano con lana pura al 100%, calda, traspirante e naturalmente avvolgente. Disponibile in Caramello caldo e Grigio delicato. Perfetta per chi ama i dettagli artigianali e i materiali naturali.",
+    images: [
+      "/products/sciarpa/sciarpa.png",
+      "/products/sciarpa/sciarpa_cappuccino.png",
+      "/products/sciarpa/sciarpa_grigia.png",
+    ],
+    isSoldOut: false,
+    details: [
+      "Lana 100% fatta a mano",
+      "Caramello caldo e Grigio delicato",
+      "Spedizione inclusa (Italia)",
+    ],
+    variants: [
+      { id: "caramello", label: "Caramello caldo", priceCents: 3000 },
+      { id: "grigio", label: "Grigio delicato", priceCents: 3000 },
     ],
   },
 ];
@@ -291,6 +331,19 @@ export function formatPriceEUR(priceCents: number) {
 export function getProductPrice(product: Product, variant?: ProductVariant | null): number {
   if (variant?.priceCents != null) return variant.priceCents
   return product.priceCents
+}
+
+/** Prezzo effettivo (con sconto saldi se presente). */
+export function getEffectivePrice(product: Product, variant?: ProductVariant | null): number {
+  const base = getProductPrice(product, variant)
+  if (product.saleDiscountPercent != null && product.saleDiscountPercent > 0) {
+    return Math.round(base * (1 - product.saleDiscountPercent / 100))
+  }
+  return base
+}
+
+export function isOnSale(product: Product): boolean {
+  return product.saleDiscountPercent != null && product.saleDiscountPercent > 0
 }
 
 export function getProductDisplayName(product: Product, variant?: ProductVariant | null): string {

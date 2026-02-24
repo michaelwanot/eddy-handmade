@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
 import { NextResponse } from 'next/server'
-import { products } from '@/lib/products'
+import { products, getEffectivePrice } from '@/lib/products'
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY
 
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       ? p.variants?.find((v) => v.id === i.variantId)
       : undefined
     const quantity = Math.max(1, Math.min(99, Number(i.qty || 1)))
-    const unitAmount = variant?.priceCents ?? p.priceCents
+    const unitAmount = getEffectivePrice(p, variant)
     const lineName = variant ? `${p.name} – ${variant.label}` : p.name
     const imageUrls = (variant?.image ? [variant.image] : p.images ?? [])
       .filter(Boolean)
